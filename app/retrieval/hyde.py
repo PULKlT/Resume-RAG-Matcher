@@ -10,6 +10,7 @@ synthesizer.py need the same call, to avoid duplicating it three times.
 """
 import requests
 
+from app.llm.client import call_llm
 from app.config import (
     LLM_PROVIDER, OLLAMA_BASE_URL, OLLAMA_MODEL, GROQ_API_KEY, GROQ_MODEL,
     TOP_K_RETRIEVE,
@@ -25,32 +26,6 @@ Write 2-3 sentences, concrete and specific, as if extracted directly from a resu
 Query: {query}
 
 Passage:"""
-
-
-def call_llm(prompt: str, max_tokens: int = 150) -> str:
-    if LLM_PROVIDER == "ollama":
-        resp = requests.post(
-            f"{OLLAMA_BASE_URL}/api/generate",
-            json={"model": OLLAMA_MODEL, "prompt": prompt, "stream": False,
-                  "options": {"num_predict": max_tokens}},
-            timeout=60,
-        )
-        resp.raise_for_status()
-        return resp.json()["response"].strip()
-
-    elif LLM_PROVIDER == "groq":
-        from groq import Groq
-        client = Groq(api_key=GROQ_API_KEY)
-        completion = client.chat.completions.create(
-            model=GROQ_MODEL,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-        )
-        return completion.choices[0].message.content.strip()
-
-    else:
-        raise ValueError(f"Unknown LLM_PROVIDER: {LLM_PROVIDER}")
-
 
 class HydeRetriever:
     def __init__(self, vector_store: VectorStore, embedder: Embedder):
