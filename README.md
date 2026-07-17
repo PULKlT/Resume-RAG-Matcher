@@ -25,14 +25,16 @@ Query → Query Expansion → Hybrid Retriever → Reranker → Synthesizer → 
 
 ## Tech Stack
 
+100% free — no paid APIs required.
+
 | Component | Tool |
 |---|---|
 | Backend | FastAPI |
-| Embeddings | BGE / Sentence-Transformers |
-| Vector store | FAISS |
+| Embeddings | BGE / Sentence-Transformers (local) |
+| Vector store | FAISS (local) |
 | Sparse retrieval | BM25 (rank_bm25) |
-| Reranker | Cross-encoder (ms-marco-MiniLM) |
-| LLM | Claude / OpenAI API |
+| Reranker | Cross-encoder (ms-marco-MiniLM, local) |
+| LLM | Ollama (local, default) or Groq free tier (hosted alt) |
 | Frontend | Streamlit |
 
 ## Setup
@@ -41,8 +43,18 @@ Query → Query Expansion → Hybrid Retriever → Reranker → Synthesizer → 
 git clone <repo-url>
 cd resume-rag-matcher
 pip install -r requirements.txt
-cp .env.example .env   # add API keys
+cp .env.example .env
 ```
+
+**LLM setup (choose one — both free):**
+
+- **Ollama (default, fully local, no signup)**
+  ```bash
+  # install from https://ollama.com, then:
+  ollama pull llama3.1:8b
+  ```
+- **Groq (hosted, free tier)**
+  Get a key at https://console.groq.com, set `LLM_PROVIDER=groq` and `GROQ_API_KEY` in `.env`.
 
 ## Usage
 
